@@ -12,7 +12,6 @@ Sélectionnez l'état actuel de votre projet et la date de début, puis ajustez 
 
 Les phases sont organisées par catégories : **Audit**, **Recrutement MOE**, et **Loi MOP**.
 """)
-
 st.divider()
 
 # --------------------
@@ -30,7 +29,6 @@ if etat == "-- Sélectionnez --":
     st.info("Sélectionnez votre état du projet pour afficher les étapes.")
 else:
     start_date = st.date_input("📅 Date de début du projet")
-
     phases = []
 
     # --------------------
@@ -50,13 +48,18 @@ else:
                 {"nom":"📝 Prise de décision des élus", "duree":8, "modifiable":True, "delai_mo":0},
                 {"nom":"📝 Étape de programmation", "duree":4, "modifiable":True, "delai_mo":0},
             ]
-            for phase in phases_audit:
+            for idx, phase in enumerate(phases_audit):
                 if phase["modifiable"]:
                     col1, col2 = st.columns([3,1])
                     with col1:
                         st.text(phase["nom"])
                     with col2:
-                        phase["duree"] = st.number_input("", min_value=1, value=phase["duree"])
+                        phase["duree"] = st.number_input(
+                            "",
+                            min_value=1,
+                            value=phase["duree"],
+                            key=f"audit_{idx}_{phase['nom']}"
+                        )
             phases += phases_audit
 
     # --------------------
@@ -67,13 +70,18 @@ else:
                 {"nom":"📝 Rédaction des cahiers des charges et lancement du marché", "duree":8, "modifiable":True, "delai_mo":0},
                 {"nom":"📝 Publication, analyse du marché et sélection de la MOE", "duree":8, "modifiable":True, "delai_mo":0},
             ]
-            for phase in phases_recrut:
+            for idx, phase in enumerate(phases_recrut):
                 if phase["modifiable"]:
                     col1, col2 = st.columns([3,1])
                     with col1:
                         st.text(phase["nom"])
                     with col2:
-                        phase["duree"] = st.number_input("", min_value=1, value=phase["duree"])
+                        phase["duree"] = st.number_input(
+                            "",
+                            min_value=1,
+                            value=phase["duree"],
+                            key=f"recrut_{idx}_{phase['nom']}"
+                        )
             phases += phases_recrut
 
     # --------------------
@@ -92,13 +100,18 @@ else:
                 {"nom":"🔒 VISA - Visa Etudes d’Exécution", "duree":1, "modifiable":True, "delai_mo":0},
                 {"nom":"🔒 DET - Direction Exécution Travaux", "duree":8, "modifiable":True, "delai_mo":0},
             ]
-            for phase in phases_mop:
+            for idx, phase in enumerate(phases_mop):
                 if phase["modifiable"]:
                     col1, col2 = st.columns([3,1])
                     with col1:
                         st.text(phase["nom"])
                     with col2:
-                        phase["duree"] = st.number_input("", min_value=1, value=phase["duree"])
+                        phase["duree"] = st.number_input(
+                            "",
+                            min_value=1,
+                            value=phase["duree"],
+                            key=f"mop_{idx}_{phase['nom']}"
+                        )
             phases += phases_mop
 
     st.divider()
