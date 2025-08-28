@@ -19,7 +19,7 @@ st.divider()
 etat = st.selectbox(
     "Où en êtes-vous dans votre projet de rénovation énergétique ?",
     ["-- Sélectionnez --",
-     ""Nous n'avons pas encore effectué d'audit énergétique",
+     "Nous n'avons pas encore effectué d'audit énergétique",
      "Nous venons de recevoir les comptes rendus des études préalables (dont l'audit énergétique)",
      "Nous voulons lancer notre marché de recrutement de maîtrise d'oeuvre",
      "Nous venons de sélectionner notre équipe de maitrise d'oeuvre"]
@@ -207,5 +207,6 @@ else:
         )
     
         st.plotly_chart(fig, use_container_width=True)
+
 
 
