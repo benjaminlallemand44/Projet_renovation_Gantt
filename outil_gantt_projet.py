@@ -17,12 +17,12 @@ st.divider()
 # --------------------
 # 1️⃣ Choix de l'état du projet
 etat = st.selectbox(
-    "Où en es-tu dans ton projet de rénovation ?",
+    "Où en êtes-vous dans votre projet de rénovation énergétique ?",
     ["-- Sélectionnez --",
-     "L'audit n'est pas encore fait",
-     "Nous venons de recevoir l'audit",
-     "Je veux lancer mon marché de recrutement de maitrise d'oeuvre",
-     "J'ai recruté mon équipe de maitrise d'oeuvre"]
+     ""Nous n'avons pas encore effectué d'audit énergétique",
+     "Nous venons de recevoir les comptes rendus des études préalables (dont l'audit énergétique)",
+     "Nous voulons lancer notre marché de recrutement de maîtrise d'oeuvre",
+     "Nous venons de sélectionner notre équipe de maitrise d'oeuvre"]
 )
 
 if etat == "-- Sélectionnez --":
@@ -133,7 +133,59 @@ else:
             current_start = end + timedelta(weeks=phase["delai_mo"])
     
         df = pd.DataFrame(tasks)
+        
+        # ➕ Ajout de la barre "Recherche de financement"
+        if not df.empty:
+            df = pd.concat([
+                df,
+                pd.DataFrame([{
+                    "Task":"💶 Recherche de financement",
+                    "Start":df["Start"].min(),
+                    "Finish":df["Start"].min() + timedelta(weeks=6),
+                    "Type":"Financement",
+                    "Groupe":"Financement"
+                }])
+            ], ignore_index=True)
     
+        fig = px.timeline(
+            df,
+            x_start="Start",
+            x_end="Finish",
+            y="Task",
+            color="Type",
+            color_discrete_map={"Phase": "#0915a6", "Délai MO": "#ff5300", "Financement":"green"},
+            title="📅 Diagramme de Gantt du projet"
+        )
+        fig.update_yaxes(autorange="reversed")
+        fig.update_traces(marker_line_width=1, marker_line_color='black')
+
+        # ➕ Regroupement par grandes parties
+        groupe_ranges = df.groupby("Groupe").agg({"Start":"min", "Finish":"max"}).reset_index()
+        for _, row in groupe_ranges.iterrows():
+            if row["Groupe"] != "Financement":  # éviter de tracer au-dessus pour financement
+                fig.add_trace(go.Scatter(
+                    x=[row["Start"], row["Finish"]],
+                    y=[len(df["Task"].unique())+1]*2,
+                    mode="lines",
+                    line=dict(color="black", width=8),
+                    name=row["Groupe"],
+                    showlegend=False,
+                    hoverinfo="text",
+                    text=row["Groupe"]
+                ))
+
+        # ➕ Ligne verticale entre Études préalables et Sélection MOE
+        if "Études préalables" in df["Groupe"].values and "Sélection MOE" in df["Groupe"].values:
+            transition_date = df[df["Groupe"] == "Études préalables"]["Finish"].max()
+            fig.add_vline(x=transition_date, line_width=2, line_dash="solid", line_color="black")
+            fig.add_annotation(
+                x=transition_date, y=-0.5,
+                text="💶",
+                showarrow=False,
+                font=dict(size=18, color="black"),
+                yshift=-30
+            )
+            
         fig = px.timeline(
             df,
             x_start="Start",
@@ -155,4 +207,5 @@ else:
         )
     
         st.plotly_chart(fig, use_container_width=True)
+
 
