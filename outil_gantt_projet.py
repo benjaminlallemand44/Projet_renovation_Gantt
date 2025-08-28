@@ -33,20 +33,19 @@ else:
 
     # --------------------
     # --- Audit ---
-    if etat in ["L'audit n'est pas encore fait", "Nous venons de recevoir l'audit"]:
-        with st.expander("📋 Audit", expanded=True):
+    if etat in ["Nous n'avons pas encore effectué d'audit énergétique", "Nous venons de recevoir les comptes rendus des études préalables (dont l'audit énergétique)"]:
+        with st.expander("📋 Études préalables", expanded=True):
             phases_audit = []
-            if etat == "L'audit n'est pas encore fait":
+            if etat == "Nous n'avons pas encore effectué d'audit énergétique":
                 phases_audit += [
-                    {"nom":"📝 Analyse du besoin", "duree":2, "modifiable":True, "delai_mo":0},
-                    {"nom":"📝 Passation du marché et analyse", "duree":3, "modifiable":True, "delai_mo":0},
-                    {"nom":"📝 Réalisation de l'étude et restitution", "duree":4, "modifiable":True, "delai_mo":0},
+                    {"nom":"📝 Analyse du site: Faisabilité, diagnostics diverses et audit énergétique ", "duree":20, "modifiable":True, "delai_mo":0},
+                    {"nom":"📝 Restitution de l'audit énergétique", "duree":2, "modifiable":True, "delai_mo":0},
                 ]
             # Étapes fixes audit
             phases_audit += [
-                {"nom":"📝 Analyse et restitution de l'audit", "duree":2, "modifiable":True, "delai_mo":0},
-                {"nom":"📝 Prise de décision des élus", "duree":8, "modifiable":True, "delai_mo":0},
-                {"nom":"📝 Étape de programmation", "duree":4, "modifiable":True, "delai_mo":0},
+                {"nom":"📝 Analyse des comptes-rendus d'audits", "duree":2, "modifiable":True, "delai_mo":0},
+                {"nom":"📝 Prise de décision des élus", "duree":0, "modifiable":False, "delai_mo":6},
+                {"nom":"📝 Rédaction du programme de travaux et validation", "duree":4, "modifiable":True, "delai_mo":2},
             ]
             for idx, phase in enumerate(phases_audit):
                 if phase["modifiable"]:
@@ -63,9 +62,9 @@ else:
             phases += phases_audit
 
     # --------------------
-    # --- Recrutement MOE ---
-    if etat in ["L'audit n'est pas encore fait", "Nous venons de recevoir l'audit", "Je veux lancer mon marché de recrutement de maitrise d'oeuvre"]:
-        with st.expander("🧑‍💼 Recrutement de la MOE", expanded=True):
+    # --- Sélection d'un MOE ---
+    if etat in ["Nous n'avons pas encore effectué d'audit énergétique", "Nous venons de recevoir les comptes rendus des études préalables (dont l'audit énergétique)", "Nous voulons lancer notre marché de recrutement de maîtrise d'oeuvre"]:
+        with st.expander("🧑‍💼 Sélection d'une MOE", expanded=True):
             phases_recrut = [
                 {"nom":"📝 Rédaction des cahiers des charges et lancement du marché", "duree":8, "modifiable":True, "delai_mo":0},
                 {"nom":"📝 Publication, analyse du marché et sélection de la MOE", "duree":8, "modifiable":True, "delai_mo":0},
@@ -86,9 +85,8 @@ else:
 
     # --------------------
     # --- MOE / Loi MOP ---
-    if etat in ["L'audit n'est pas encore fait","Nous venons de recevoir l'audit",
-                "Je veux lancer mon marché de recrutement de maitrise d'oeuvre",
-                "J'ai recruté mon équipe de maitrise d'oeuvre"]:
+    if etat in ["Nous n'avons pas encore effectué d'audit énergétique", "Nous venons de recevoir les comptes rendus des études préalables (dont l'audit énergétique)", "Nous voulons lancer notre marché de recrutement de maîtrise d'oeuvre",
+                "Nous venons de sélectionner notre équipe de maitrise d'oeuvre"]:
         with st.expander("🏗️ MOE (Loi MOP)", expanded=True):
             phases_mop = [
                 {"nom":"📝 DIAG - Diagnostic & Études d’Esquisse", "duree":4, "modifiable":True, "delai_mo":2},
@@ -96,9 +94,11 @@ else:
                 {"nom":"📝 APD - Avant-Projet Définitif", "duree":8, "modifiable":True, "delai_mo":3},
                 {"nom":"📝 Constitution Dossier Autorisation", "duree":2, "modifiable":True, "delai_mo":2},
                 {"nom":"📝 PRO - Études de Projet", "duree":6, "modifiable":True, "delai_mo":3},
+                {"nom":"📝 DCE - Études de Projet", "duree":6, "modifiable":True, "delai_mo":3},
                 {"nom":"📝 ACT - Assistance passation marchés", "duree":2, "modifiable":True, "delai_mo":1},
-                {"nom":"🔒 VISA - Visa Etudes d’Exécution", "duree":1, "modifiable":True, "delai_mo":0},
-                {"nom":"🔒 DET - Direction Exécution Travaux", "duree":8, "modifiable":True, "delai_mo":0},
+                {"nom":"📝 VISA - Visa Etudes d’Exécution", "duree":1, "modifiable":True, "delai_mo":0},
+                {"nom":"🚧 DET - Direction Exécution Travaux", "duree":8, "modifiable":True, "delai_mo":0},
+                {"nom":"👷‍♂️👷‍♀️ AOR - Assistance aux opérations de réception", "duree":4, "modifiable":True, "delai_mo":0}
             ]
             for idx, phase in enumerate(phases_mop):
                 if phase["modifiable"]:
@@ -155,3 +155,4 @@ else:
         )
     
         st.plotly_chart(fig, use_container_width=True)
+
