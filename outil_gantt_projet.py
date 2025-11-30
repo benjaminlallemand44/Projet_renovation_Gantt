@@ -247,7 +247,7 @@ else:
         fig.update_layout(height=900,width=1400,
                           margin=dict(l=50,r=50,t=120,b=80),
                           title=dict(text="📅 Diagramme de Gantt du projet — unités : semaines", font=dict(size=18,color="#0915a6")),
-                          xaxis=dict(tickfont=dict(size=14),title="Date (unités : semaines)"),
+                          xaxis=dict(tickfont=dict(size=14),title="Date"),
                           yaxis=dict(tickfont=dict(size=12),title="Phases"),
                           plot_bgcolor="white")
         fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey')
@@ -279,4 +279,4 @@ else:
         # Glossaire complet sous le Gantt
         st.markdown("### 📚 Glossaire des phases")
         gloss_df = pd.DataFrame([{"Phase": k, "Définition": v} for k,v in GLOSSAIRE_COMPLET.items()])
-        st.dataframe(gloss_df,use_container_width=True)
+        st.dataframe(gloss_df, use_container_width=True, height=600)
