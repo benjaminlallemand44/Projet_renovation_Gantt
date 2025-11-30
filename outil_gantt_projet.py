@@ -293,7 +293,7 @@ else:
         
         html_gloss = """
         <div style='max-height:600px; overflow-y:auto;'>
-        <table style='border-collapse: collapse; width: 100%;'>
+        <table style='border-collapse: collapse; width: 100%; table-layout: fixed;'>
         <tr><th style='border: 1px solid black; padding:5px;'>Phase</th>
         <th style='border: 1px solid black; padding:5px;'>Définition</th></tr>
         """
@@ -301,9 +301,9 @@ else:
         for phase, def_text in GLOSSAIRE_COMPLET.items():
             color = color_map.get(phase,"#ffffff")
             html_gloss += f"""
-            <tr style='background-color:{color};'>
-                <td style='border: 1px solid black; padding:5px; vertical-align: top; font-weight:bold;'>{phase}</td>
-                <td style='border: 1px solid black; padding:5px; vertical-align: top;'>{def_text}</td>
+            <tr style='background-color:{color}; line-height:1.4em;'>
+                <td style='border: 1px solid black; padding:5px; vertical-align: top; font-weight:bold; word-wrap: break-word;'>{phase}</td>
+                <td style='border: 1px solid black; padding:5px; vertical-align: top; word-wrap: break-word;'>{def_text}</td>
             </tr>
             """
         
@@ -311,4 +311,5 @@ else:
         
         st.markdown("### 📚 Glossaire des phases", unsafe_allow_html=True)
         st.markdown(html_gloss, unsafe_allow_html=True)
+
 
