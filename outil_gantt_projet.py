@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 logo_url = "images/Logo_ACTEE_CMYN-HD.png"
 
 # Afficher le logo
-st.image(logo_url, width=250)
+st.image(logo_url, width=450)
     
 # --------------------
 # Glossaire simplifié pour affichage dans les inputs (tooltips)
