@@ -5,9 +5,20 @@ from datetime import timedelta
 import streamlit.components.v1 as components
 
 # URL brute du logo sur GitHub
-logo_url = "https://github.com/benjaminlallemand44/Projet_renovation_Gantt/blob/main/images/Logo_ACTEE_CMYN.svg"
+svg_url = "https://github.com/benjaminlallemand44/Projet_renovation_Gantt/blob/main/images/Logo_ACTEE_CMYN.svg"
 
-st.image(logo_url, width=150)
+response = requests.get(svg_url)
+svg_content = response.text
+
+# Afficher le SVG avec st.markdown
+st.markdown(
+    f"""
+    <div style="width: 150px; height: auto;">
+        {svg_content}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
     
 # --------------------
