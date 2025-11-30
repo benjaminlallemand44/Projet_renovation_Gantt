@@ -277,50 +277,57 @@ else:
         st.plotly_chart(fig,use_container_width=True)
 
       
-        # Tableau HTML coloré et scrollable
-        color_map = {
-            "DIAG":"#cfe3ff",
-            "ESQ":"#cfe3ff",
-            "APS":"#cfe3ff",
-            "APD":"#cfe3ff",
-            "Autorisations Administratives":"#ffe5cc",
-            "PRO":"#e6ccff",
-            "ACT / AMT":"#e6ccff",
-            "DCE":"#e6ccff",
-            "EXE":"#e6ccff",
-            "AOR":"#e6ccff"
-        }
-        
-        # DataFrame
         df_gloss = pd.DataFrame({
             "Phase": list(GLOSSAIRE_COMPLET.keys()),
             "Définition": list(GLOSSAIRE_COMPLET.values())
         })
+        color_map = {
+            "DIAG": "#cfe3ff",
+            "ESQ": "#cfe3ff",
+            "APS": "#d4e6f1",
+            "APD": "#d4e6f1",
+            "Autorisations Administratives": "#ffe5cc",
+            "PRO": "#e6ccff",
+            "ACT / AMT": "#e6ccff",
+            "DCE": "#e6ccff",
+            "EXE": "#f9f2f2",
+            "AOR": "#f9f2f2"
+        }
+        # Début du tableau HTML
+        html_table = """
+        <table style="width:100%; border-collapse:collapse; border:1px solid #ddd; font-family:Arial; margin-top:20px;">
+            <thead>
+                <tr style="background-color:#f2f2f2;">
+                    <th style="padding:12px; text-align:left; border:1px solid #ddd; width:20%;">Phase</th>
+                    <th style="padding:12px; text-align:left; border:1px solid #ddd; width:80%;">Définition</th>
+                </tr>
+            </thead>
+            <tbody>
+        """
         
-        # Appliquer couleurs via styler
-        def color_rows(row):
-            return ['background-color: {}'.format(color_map.get(row['Phase'], '#ffffff'))]*2
-        # Appliquer le style
-        styled_df = df_gloss.style.apply(color_rows, axis=1)
+        # Ajoutez les lignes du tableau avec les couleurs et le texte complet
+        for index, row in df_gloss.iterrows():
+            phase = row["Phase"]
+            background_color = color_map.get(phase, "#ffffff")
+            html_table += f"""
+            <tr style="background-color:{background_color};">
+                <td style="padding:12px; text-align:left; border:1px solid #ddd; vertical-align:top; width:20%;">
+                    <strong>{phase}</strong>
+                </td>
+                <td style="padding:12px; text-align:left; border:1px solid #ddd; vertical-align:top; width:80%; white-space:normal; word-wrap:break-word;">
+                    {row['Définition']}
+                </td>
+            </tr>
+            """
         
-        # CSS pour afficher tout le texte et permettre la sélection
-        st.markdown("""
-        <style>
-            .dataframe {
-                width: 100%;
-                max-width: 100%;
-                overflow-x: auto;
-            }
-            .dataframe td {
-                white-space: normal !important;
-                word-wrap: break-word !important;
-                max-height: none !important;
-                min-height: 100px !important;
-                vertical-align: top !important;
-            }
-        </style>
-        """, unsafe_allow_html=True)
+        # Fin du tableau HTML
+        html_table += """
+            </tbody>
+        </table>
+        """
         st.markdown("### 📚 Glossaire des phases")
-        st.dataframe(df_gloss.style.apply(color_rows, axis=1))
+        st.markdown(html_table, unsafe_allow_html=True)
+
+
 
 
