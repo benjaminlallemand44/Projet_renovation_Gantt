@@ -303,10 +303,18 @@ else:
         # Appliquer le style
         styled_df = df_gloss.style.apply(color_rows, axis=1)
         
-        # Utiliser du CSS pour ajuster la hauteur des lignes
+        # CSS pour afficher tout le texte et permettre la sélection
         st.markdown("""
         <style>
+            .dataframe {
+                width: 100%;
+                max-width: 100%;
+                overflow-x: auto;
+            }
             .dataframe td {
+                white-space: normal !important;
+                word-wrap: break-word !important;
+                max-height: none !important;
                 min-height: 100px !important;
                 vertical-align: top !important;
             }
