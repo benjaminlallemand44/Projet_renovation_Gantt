@@ -291,25 +291,17 @@ else:
             "AOR":"#e6ccff"
         }
         
-        html_gloss = """
-        <div style='max-height:600px; overflow-y:auto;'>
-        <table style='border-collapse: collapse; width: 100%; table-layout: fixed;'>
-        <tr><th style='border: 1px solid black; padding:5px;'>Phase</th>
-        <th style='border: 1px solid black; padding:5px;'>Définition</th></tr>
-        """
+        # DataFrame
+        df_gloss = pd.DataFrame({
+            "Phase": list(GLOSSAIRE_COMPLET.keys()),
+            "Définition": list(GLOSSAIRE_COMPLET.values())
+        })
         
-        for phase, def_text in GLOSSAIRE_COMPLET.items():
-            color = color_map.get(phase,"#ffffff")
-            html_gloss += f"""
-            <tr style='background-color:{color}; line-height:1.4em;'>
-                <td style='border: 1px solid black; padding:5px; vertical-align: top; font-weight:bold; word-wrap: break-word;'>{phase}</td>
-                <td style='border: 1px solid black; padding:5px; vertical-align: top; word-wrap: break-word;'>{def_text}</td>
-            </tr>
-            """
+        # Appliquer couleurs via styler
+        def color_rows(row):
+            return ['background-color: {}'.format(color_map.get(row['Phase'], '#ffffff'))]*2
         
-        html_gloss += "</table></div>"
-        
-        st.markdown("### 📚 Glossaire des phases", unsafe_allow_html=True)
-        st.markdown(html_gloss, unsafe_allow_html=True)
+        st.markdown("### 📚 Glossaire des phases")
+        st.dataframe(df_gloss.style.apply(color_rows, axis=1), height=600)
 
 
