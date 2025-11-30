@@ -7,12 +7,8 @@ import streamlit.components.v1 as components
 # URL brute du logo sur GitHub
 logo_url = "https://github.com/benjaminlallemand44/Projet_renovation_Gantt/blob/main/images/Logo_ACTEE_CMYN.svg"
 
-# Afficher le logo en haut à gauche
-col1, col2 = st.columns([1, 4])
-with col1:
-    st.image(logo_url, width=150)
-with col2:
-    st.empty()
+st.image(logo_url, width=150)
+
     
 # --------------------
 # Glossaire simplifié pour affichage dans les inputs (tooltips)
