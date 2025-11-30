@@ -302,6 +302,6 @@ else:
             return ['background-color: {}'.format(color_map.get(row['Phase'], '#ffffff'))]*2
         
         st.markdown("### 📚 Glossaire des phases")
-        st.dataframe(df_gloss.style.apply(color_rows, axis=1), height=600)
+        st.dataframe(df_gloss.style.apply(color_rows, axis=1), height=1000)
 
 
