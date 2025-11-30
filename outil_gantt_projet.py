@@ -339,5 +339,5 @@ else:
                 {html_table}
             </div>
             """,
-            height=600,  # Ajustez la hauteur selon vos besoins
+            height=800,  # Ajustez la hauteur selon vos besoins
         )
