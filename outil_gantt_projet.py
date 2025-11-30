@@ -276,7 +276,39 @@ else:
 
         st.plotly_chart(fig,use_container_width=True)
 
-        # Glossaire complet sous le Gantt
-        st.markdown("### 📚 Glossaire des phases")
-        gloss_df = pd.DataFrame([{"Phase": k, "Définition": v} for k,v in GLOSSAIRE_COMPLET.items()])
-        st.dataframe(gloss_df, use_container_width=True, height=600)
+      
+        # Tableau HTML coloré et scrollable
+        color_map = {
+            "DIAG":"#cfe3ff",
+            "ESQ":"#cfe3ff",
+            "APS":"#cfe3ff",
+            "APD":"#cfe3ff",
+            "Autorisations Administratives":"#ffe5cc",
+            "PRO":"#e6ccff",
+            "ACT / AMT":"#e6ccff",
+            "DCE":"#e6ccff",
+            "EXE":"#e6ccff",
+            "AOR":"#e6ccff"
+        }
+        
+        html_gloss = """
+        <div style='max-height:600px; overflow-y:auto;'>
+        <table style='border-collapse: collapse; width: 100%;'>
+        <tr><th style='border: 1px solid black; padding:5px;'>Phase</th>
+        <th style='border: 1px solid black; padding:5px;'>Définition</th></tr>
+        """
+        
+        for phase, def_text in GLOSSAIRE_COMPLET.items():
+            color = color_map.get(phase,"#ffffff")
+            html_gloss += f"""
+            <tr style='background-color:{color};'>
+                <td style='border: 1px solid black; padding:5px; vertical-align: top; font-weight:bold;'>{phase}</td>
+                <td style='border: 1px solid black; padding:5px; vertical-align: top;'>{def_text}</td>
+            </tr>
+            """
+        
+        html_gloss += "</table></div>"
+        
+        st.markdown("### 📚 Glossaire des phases", unsafe_allow_html=True)
+        st.markdown(html_gloss, unsafe_allow_html=True)
+
