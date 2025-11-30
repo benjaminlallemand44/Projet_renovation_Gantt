@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from datetime import timedelta
+import streamlit.components.v1 as components
 
 # --------------------
 # Glossaire simplifié pour affichage dans les inputs (tooltips)
@@ -277,10 +278,13 @@ else:
         st.plotly_chart(fig,use_container_width=True)
 
       
+
+        # Vos données
         df_gloss = pd.DataFrame({
             "Phase": list(GLOSSAIRE_COMPLET.keys()),
             "Définition": list(GLOSSAIRE_COMPLET.values())
         })
+        
         color_map = {
             "DIAG": "#cfe3ff",
             "ESQ": "#cfe3ff",
@@ -293,6 +297,7 @@ else:
             "EXE": "#f9f2f2",
             "AOR": "#f9f2f2"
         }
+        
         # Début du tableau HTML
         html_table = """
         <table style="width:100%; border-collapse:collapse; border:1px solid #ddd; font-family:Arial; margin-top:20px;">
@@ -305,7 +310,7 @@ else:
             <tbody>
         """
         
-        # Ajoutez les lignes du tableau avec les couleurs et le texte complet
+        # Ajoutez les lignes du tableau
         for index, row in df_gloss.iterrows():
             phase = row["Phase"]
             background_color = color_map.get(phase, "#ffffff")
@@ -325,9 +330,14 @@ else:
             </tbody>
         </table>
         """
+        
+        # Affichez le tableau avec `components.html`
         st.markdown("### 📚 Glossaire des phases")
-        st.markdown(html_table, unsafe_allow_html=True)
-
-
-
-
+        components.html(
+            f"""
+            <div style="width:100%; overflow-x:auto;">
+                {html_table}
+            </div>
+            """,
+            height=600,  # Ajustez la hauteur selon vos besoins
+        )
