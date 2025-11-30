@@ -300,8 +300,19 @@ else:
         # Appliquer couleurs via styler
         def color_rows(row):
             return ['background-color: {}'.format(color_map.get(row['Phase'], '#ffffff'))]*2
+        # Appliquer le style
+        styled_df = df_gloss.style.apply(color_rows, axis=1)
         
+        # Utiliser du CSS pour ajuster la hauteur des lignes
+        st.markdown("""
+        <style>
+            .dataframe td {
+                min-height: 100px !important;
+                vertical-align: top !important;
+            }
+        </style>
+        """, unsafe_allow_html=True)
         st.markdown("### 📚 Glossaire des phases")
-        st.dataframe(df_gloss.style.apply(color_rows, axis=1), height=1000)
+        st.dataframe(df_gloss.style.apply(color_rows, axis=1))
 
 
