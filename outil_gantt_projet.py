@@ -5,7 +5,7 @@ from datetime import timedelta
 import streamlit.components.v1 as components
 
 # URL brute du logo sur GitHub
-logo_url = "main/images/Logo_ACTEE_CMYN.svg"
+logo_url = "https://github.com/benjaminlallemand44/Projet_renovation_Gantt/blob/main/images/Logo_ACTEE_CMYN.svg"
 
 # Afficher le logo en haut à gauche
 col1, col2 = st.columns([1, 4])
