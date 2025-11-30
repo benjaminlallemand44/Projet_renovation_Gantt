@@ -5,7 +5,7 @@ from datetime import timedelta
 import streamlit.components.v1 as components
 
 # URL brute du logo sur GitHub
-logo_url = "https://github.com/benjaminlallemand44/Projet_renovation_Gantt/blob/main/images/Logo_ACTEE_CMYN-HD.png"
+logo_url = "images/Logo_ACTEE_CMYN-HD.png"
 
 # Afficher le logo
 st.image(logo_url, width=150)
