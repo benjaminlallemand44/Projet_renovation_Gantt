@@ -4,6 +4,16 @@ import plotly.express as px
 from datetime import timedelta
 import streamlit.components.v1 as components
 
+# URL brute du logo sur GitHub
+logo_url = "main/images/Logo_ACTEE_CMYN.svg"
+
+# Afficher le logo en haut à gauche
+col1, col2 = st.columns([1, 4])
+with col1:
+    st.image(logo_url, width=150)
+with col2:
+    st.empty()
+    
 # --------------------
 # Glossaire simplifié pour affichage dans les inputs (tooltips)
 GLOSSAIRE = {
