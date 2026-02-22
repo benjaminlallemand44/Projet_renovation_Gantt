@@ -47,18 +47,25 @@ st.markdown("""
 Bienvenue dans l'outil de planification de projet de rénovation.  
 Sélectionnez l'état actuel de votre projet et la **date de début**, puis ajustez les durées des phases (en **semaines**) pour générer un diagramme de Gantt interactif et clair.  
 
-Les phases sont organisées par catégories : **Études préalables**, **Sélection MOE**, **MOE (Loi MOP)**.
+Les phases sont organisées par catégories : **Études préalables**, **AMO Programmiste**, **Sélection MOE**, **MOE (Loi MOP)**.
 """)
 st.divider()
 
 # --------------------
-# Bandeaux catégories
-cat_col1, cat_col2, cat_col3 = st.columns([1,1,1])
+# Bandeaux catégories (grandes étapes du projet)
+
+cat_col1, cat_col2, cat_col3, cat_col4 = st.columns([1,1,1,1])
+
 with cat_col1:
     st.markdown("**🟦 Études préalables**")
+
 with cat_col2:
-    st.markdown("**🟧 Sélection MOE**")
+    st.markdown("**🟩 AMO Programmiste**")
+
 with cat_col3:
+    st.markdown("**🟧 Sélection MOE**")
+
+with cat_col4:
     st.markdown("**🟪 MOE (Loi MOP)**")
 
 st.markdown("---")
