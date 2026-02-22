@@ -207,21 +207,21 @@ else:
     if st.button("Générer le diagramme de Gantt"):
         tasks = []
         current_start = pd.to_datetime(start_date)
-
-        # Recherche financement
-        if include_financement:
+    
+        # Recherche de financement
+        if include_financement and etat != "Nous venons de sélectionner notre équipe de maitrise d'oeuvre":
             fin_start = current_start
             fin_end = fin_start + timedelta(weeks=recherche_financement_weeks)
             tasks.append(dict(Task="💶 Recherche de financement", Start=fin_start, Finish=fin_end,
                               Type="Financement", Groupe="Financement", Definition="Recherche et montage des financements (subventions, prêts, etc.)."))
-            current_start = fin_end
-
+            # Ne pas mettre à jour current_start pour permettre le chevauchement
+    
         for phase in phases:
             if phase["nom"].startswith("ESQ"):
-                continue  # n'apparait pas sur le Gantt
+                continue  # n'apparaît pas sur le Gantt
             start = current_start
             dur = phase["duree"]
-            delay = phase.get("delai_mo",0)
+            delay = phase.get("delai_mo", 0)
             end_phase = start + timedelta(weeks=dur)
             tasks.append(dict(Task=phase["nom"], Start=start, Finish=end_phase,
                               Type='Phase', Groupe=phase["groupe"], Definition=GLOSSAIRE.get(phase["nom"].split(" - ")[0], "")))
@@ -232,118 +232,58 @@ else:
                 current_start = end_delay
             else:
                 current_start = end_phase
-
+    
         df = pd.DataFrame(tasks)
         if df.empty:
             st.info("Aucune phase à afficher.")
             st.stop()
-
+    
         df["Duration_weeks"] = (pd.to_datetime(df["Finish"]) - pd.to_datetime(df["Start"])).dt.days / 7
         df["hover_def"] = df["Definition"].fillna("") + "<br>Durée: " + df["Duration_weeks"].round(1).astype(str) + " semaines"
-
+    
         fig = px.timeline(
             df, x_start="Start", x_end="Finish", y="Task", color="Type",
-            custom_data=["hover_def","Groupe"],
-            color_discrete_map={"Phase":"#0915a6","Délai MO":"#ff5300","Financement":"green"}
+            custom_data=["hover_def", "Groupe"],
+            color_discrete_map={"Phase": "#0915a6", "Délai MO": "#ff5300", "Financement": "green"}
         )
         fig.update_traces(
             hovertemplate="%{y}<br>%{customdata[0]}<br>Catégorie: %{customdata[1]}<extra></extra>",
             marker_line_width=1, marker_line_color='black'
         )
         fig.update_yaxes(autorange="reversed")
-        fig.update_layout(height=900,width=1400,
-                          margin=dict(l=50,r=50,t=120,b=80),
-                          title=dict(text="📅 Diagramme de Gantt du projet — unités : semaines", font=dict(size=18,color="#0915a6")),
-                          xaxis=dict(tickfont=dict(size=14),title="Date"),
-                          yaxis=dict(tickfont=dict(size=12),title="Phases"),
+        fig.update_layout(height=900, width=1400,
+                          margin=dict(l=50, r=50, t=120, b=80),
+                          title=dict(text="📅 Diagramme de Gantt du projet — unités : semaines", font=dict(size=18, color="#0915a6")),
+                          xaxis=dict(tickfont=dict(size=14), title="Date"),
+                          yaxis=dict(tickfont=dict(size=12), title="Phases"),
                           plot_bgcolor="white")
         fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey')
-
+    
         # Bandeaux catégories
-        groups_to_show = ["Études préalables","Sélection MOE","MOE","Financement"]
-        color_map_group = {"Études préalables":"#cfe3ff","Sélection MOE":"#ffe5cc","MOE":"#e6ccff","Financement":"#d6f5d6"}
+        groups_to_show = ["Études préalables", "Sélection MOE", "MOE", "Financement"]
+        color_map_group = {"Études préalables": "#cfe3ff", "Sélection MOE": "#ffe5cc", "MOE": "#e6ccff", "Financement": "#d6f5d6"}
         shapes = []
         annotations = []
         for grp in groups_to_show:
-            grp_df = df[df["Groupe"]==grp]
-            if grp_df.empty: continue
+            grp_df = df[df["Groupe"] == grp]
+            if grp_df.empty:
+                continue
             s = grp_df["Start"].min()
             f = grp_df["Finish"].max()
             shapes.append(dict(type="rect", xref="x", yref="paper", x0=s, x1=f, y0=1.02, y1=1.08,
-                               fillcolor=color_map_group.get(grp,"#dddddd"), line=dict(width=0), opacity=0.8))
+                               fillcolor=color_map_group.get(grp, "#dddddd"), line=dict(width=0), opacity=0.8))
             annotations.append(dict(x=s + (f-s)/2, y=1.095, xref="x", yref="paper",
-                                    text=f"<b>{grp}</b>", showarrow=False, align="center", font=dict(size=12,color="black")))
+                                    text=f"<b>{grp}</b>", showarrow=False, align="center", font=dict(size=12, color="black")))
+    
         fig.update_layout(shapes=shapes, annotations=annotations)
+    
+        # Supprimer le séparateur avec l'emoji billet
+        # Si vous souhaitez le garder, décommentez les lignes suivantes et ajustez le texte si nécessaire
+        # if "Études préalables" in df["Groupe"].values and "Sélection MOE" in df["Groupe"].values:
+        #     transition_date = df[df["Groupe"] == "Études préalables"]["Finish"].max()
+        #     fig.add_vline(x=transition_date, line_width=2, line_dash="solid", line_color="black")
+        #     fig.add_annotation(x=transition_date, y=-0.5, text="Transition", showarrow=False, font=dict(size=12, color="black"), yshift=-30)
+    
+        st.plotly_chart(fig, use_container_width=True)
 
-        # Ligne verticale € entre Études préalables et Sélection MOE
-        if "Études préalables" in df["Groupe"].values and "Sélection MOE" in df["Groupe"].values:
-            transition_date = df[df["Groupe"]=="Études préalables"]["Finish"].max()
-            fig.add_vline(x=transition_date,line_width=2,line_dash="solid",line_color="black")
-            fig.add_annotation(x=transition_date,y=-0.5,text="💶",showarrow=False,font=dict(size=18,color="black"),yshift=-30)
-
-        st.plotly_chart(fig,use_container_width=True)
-
-      
-
-        # Vos données
-        df_gloss = pd.DataFrame({
-            "Phase": list(GLOSSAIRE_COMPLET.keys()),
-            "Définition": list(GLOSSAIRE_COMPLET.values())
-        })
-        
-        color_map = {
-            "DIAG": "#cfe3ff",
-            "ESQ": "#cfe3ff",
-            "APS": "#d4e6f1",
-            "APD": "#d4e6f1",
-            "Autorisations Administratives": "#ffe5cc",
-            "PRO": "#e6ccff",
-            "ACT / AMT": "#e6ccff",
-            "DCE": "#e6ccff",
-            "EXE": "#f9f2f2",
-            "AOR": "#f9f2f2"
-        }
-        
-        # Début du tableau HTML
-        html_table = """
-        <table style="width:100%; border-collapse:collapse; border:1px solid #ddd; font-family:Arial; margin-top:20px;">
-            <thead>
-                <tr style="background-color:#f2f2f2;">
-                    <th style="padding:12px; text-align:left; border:1px solid #ddd; width:20%;">Phase</th>
-                    <th style="padding:12px; text-align:left; border:1px solid #ddd; width:80%;">Définition</th>
-                </tr>
-            </thead>
-            <tbody>
-        """
-        
-        # Ajoutez les lignes du tableau
-        for index, row in df_gloss.iterrows():
-            phase = row["Phase"]
-            background_color = color_map.get(phase, "#ffffff")
-            html_table += f"""
-            <tr style="background-color:{background_color};">
-                <td style="padding:12px; text-align:left; border:1px solid #ddd; vertical-align:top; width:20%;">
-                    <strong>{phase}</strong>
-                </td>
-                <td style="padding:12px; text-align:left; border:1px solid #ddd; vertical-align:top; width:80%; white-space:normal; word-wrap:break-word;">
-                    {row['Définition']}
-                </td>
-            </tr>
-            """
-        
-        # Fin du tableau HTML
-        html_table += """
-            </tbody>
-        </table>
-        """
-        
-        # Affichez le tableau avec `components.html`
-        st.markdown("### 📚 Glossaire des phases")
-        components.html(
-            f"""
-            <div style="width:100%; overflow-x:auto;">
-                {html_table}
-            </div>
-            """,
-            height=800,  # Ajustez la hauteur selon vos besoins
-        )
+   
