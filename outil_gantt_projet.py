@@ -69,9 +69,10 @@ etat = st.selectbox(
     "Où en êtes-vous dans votre projet de rénovation énergétique ?",
     ["-- Sélectionnez --",
      "Nous n'avons pas encore effectué d'audit énergétique",
-     "Nous venons de recevoir les comptes rendus des études préalables (dont l'audit énergétique)",
-     "Nous voulons lancer notre marché de recrutement de maîtrise d'oeuvre",
-     "Nous venons de sélectionner notre équipe de maitrise d'oeuvre"]
+        "Nous venons de recevoir les comptes rendus des études préalables (dont l'audit énergétique)",
+        "Nous souhaitons faire intervenir un AMO Programmiste",
+        "Nous voulons lancer notre marché de recrutement de maîtrise d'oeuvre",
+        "Nous venons de sélectionner notre équipe de maitrise d'oeuvre"]
 )
 
 if etat == "-- Sélectionnez --":
@@ -128,7 +129,20 @@ else:
                             key=f"audit_{idx}_{phase['nom']}"
                         )
             phases += phases_audit
-
+    # ======================
+    # AMO PROGRAMMISTE (SEULEMENT APRES AUDIT)
+    if etat in [
+        "Nous venons de recevoir les comptes rendus des études préalables (dont l'audit énergétique)",
+        "Nous souhaitons faire intervenir un AMO Programmiste"
+    ]:
+        with st.expander("🧠 AMO Programmiste", True):
+            phases_amo = [
+                {"nom":"🧠 Choix de l'AMO Programmiste", "duree":6, "modifiable":True, "groupe":"AMO"},
+                {"nom":"🧠 Déroulement AMO et analyse CR", "duree":8, "modifiable":True, "groupe":"AMO"},
+            ]
+            for i,p in enumerate(phases_amo):
+                p["duree"] = st.number_input(p["nom"], 1, 52, p["duree"], key=f"amo{i}")
+            phases += phases_amo
     # --------------------
     # Sélection MOE
     if etat in ["Nous n'avons pas encore effectué d'audit énergétique",
@@ -204,6 +218,54 @@ else:
 
     # --------------------
     # Génération Gantt
+    # GANTT
+if st.button("Générer le Gantt"):
+    tasks = []
+    current = pd.to_datetime(start_date)
+
+    # FINANCEMENT CHEVAUCHANT
+    if include_financement:
+        tasks.append(dict(
+            Task="💶 Recherche de financement",
+            Start=current,
+            Finish=current + timedelta(weeks=recherche_financement_weeks),
+            Type="Financement",
+            Groupe="Financement"
+        ))
+
+    # Phases classiques
+    for p in phases:
+        start = current
+        end = start + timedelta(weeks=p["duree"])
+        tasks.append(dict(Task=p["nom"], Start=start, Finish=end, Type="Phase", Groupe=p["groupe"]))
+        current = end
+
+    df = pd.DataFrame(tasks)
+
+    fig = px.timeline(
+        df, x_start="Start", x_end="Finish", y="Task", color="Type",
+        color_discrete_map={
+            "Phase":"#0915a6",
+            "Financement":"#999999"  # gris
+        }
+    )
+
+    fig.update_yaxes(autorange="reversed")
+
+    # Opacité financement
+    for trace in fig.data:
+        if trace.name == "Financement":
+            trace.opacity = 0.3
+
+    fig.update_layout(
+        height=900,
+        title="📅 Diagramme de Gantt (unités : semaines)",
+        plot_bgcolor="white"
+    )
+    fig.update_xaxes(showgrid=True, gridcolor="lightgrey")
+
+    st.plotly_chart(fig, use_container_width=True)
+    """
     if st.button("Générer le diagramme de Gantt"):
         tasks = []
         current_start = pd.to_datetime(start_date)
@@ -285,5 +347,5 @@ else:
         #     fig.add_annotation(x=transition_date, y=-0.5, text="Transition", showarrow=False, font=dict(size=12, color="black"), yshift=-30)
     
         st.plotly_chart(fig, use_container_width=True)
-
+"""
    
